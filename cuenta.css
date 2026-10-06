@@ -1,0 +1,156 @@
+/* © 2026 Carlos Acedo Domínguez. Todos los derechos reservados. Ver LICENSE. */
+/* Cuentas de jugador · letra grande y botones cómodos */
+.pr-banda{ position:fixed; top:calc(env(safe-area-inset-top, 0px) + 10px); left:10px; z-index:9998; background:#F29A5B; color:#0E1F3D; border-radius:999px; font:800 13px/1 'Barlow', sans-serif; letter-spacing:.08em; text-transform:uppercase; padding:8px 11px; pointer-events:none; }
+body.cg-open{ overflow:hidden; }
+.cg{ position:fixed; inset:0; z-index:9999; background:var(--surface, #0E1F3D); overflow-y:auto; -webkit-overflow-scrolling:touch;
+  padding:calc(env(safe-area-inset-top, 0px) + 20px) 16px calc(env(safe-area-inset-bottom, 0px) + 48px); }
+.cg[hidden]{ display:none; }
+.cg-card{ max-width:440px; margin:0 auto; display:flex; flex-direction:column; gap:12px; }
+.cg-head{ text-align:center; margin-bottom:6px; }
+.cg-head img{ display:block; margin:0 auto 8px; }
+.cg-eyebrow{ font:700 14px 'Barlow', sans-serif; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-text, #E8C45A); }
+.cg-title{ font:400 38px/1.05 'Anton', sans-serif; color:var(--ink-c, #F6F1E4); margin:6px 0 4px; letter-spacing:.01em; }
+.cg-sub, .cg-p{ font-size:19px; line-height:1.4; color:var(--ink-muted, #B9C3D4); margin:0; }
+.cg-p{ color:var(--ink-c, #F6F1E4); }
+.cg-lbl{ display:flex; flex-direction:column; gap:6px; font:700 18px 'Barlow', sans-serif; color:var(--ink-c, #F6F1E4); }
+.cg-lbl small{ font-weight:500; font-size:15px; color:var(--ink-muted, #B9C3D4); }
+.cg-lbl input{ font:600 21px 'Barlow', sans-serif; padding:15px 14px; border-radius:12px; border:2px solid #4A6AA3; background:#15294D; color:#F6F1E4; width:100%; }
+.cg-lbl input:focus{ outline:none; border-color:var(--focus, #E8C45A); }
+.cg-ver{ display:flex; align-items:center; gap:10px; font-size:17px; color:var(--ink-muted, #B9C3D4); }
+.cg-ver input, .cg-acepto input{ width:24px; height:24px; flex:none; accent-color:#D4AF37; }
+.cg-btn{ font:700 21px 'Barlow', sans-serif; padding:17px; border-radius:14px; border:none; cursor:pointer; touch-action:manipulation;
+  background:var(--accent, #D4AF37); color:var(--on-accent, #0E1F3D); width:100%; }
+.cg-btn:disabled{ opacity:.6; }
+.cg-btn.ghost{ background:transparent; color:#F6F1E4; border:2px solid #8FA6CF; }
+.cg-btn.danger{ background:transparent; color:#F29A5B; border:2px solid #F29A5B; }
+.cg-link{ background:none; border:none; color:var(--accent-text, #E8C45A); font:600 18px 'Barlow', sans-serif; text-decoration:underline; padding:10px; cursor:pointer; }
+.cg-sep{ text-align:center; color:var(--ink-muted, #B9C3D4); font-size:17px; margin-top:10px; }
+.cg-msg{ min-height:0; font-size:18px; font-weight:600; color:#F29A5B; line-height:1.35; }
+.cg-msg:empty{ display:none; }
+.cg-msg.ok{ color:#7BC47F; }
+.cg-nombres{ display:flex; flex-direction:column; gap:8px; }
+.cg-nombre{ text-align:left; font:600 20px 'Barlow', sans-serif; padding:15px 14px; border-radius:12px; border:2px solid #2A4373; background:#15294D; color:#F6F1E4; cursor:pointer; }
+.cg-nombre.on{ border-color:#D4AF37; background:#1B3B6F; box-shadow:inset 0 0 0 1px #D4AF37; }
+.cg-nombre.on::after{ content:' ✓'; color:#E8C45A; }
+.cg-acepto{ display:flex; gap:12px; align-items:flex-start; font-size:18px; line-height:1.4; color:#F6F1E4; margin-top:6px; }
+.cg-acepto a, .cg-legal a{ color:var(--accent-text, #E8C45A); }
+.cg-legal{ text-align:center; font-size:16px; color:var(--ink-muted, #B9C3D4); line-height:1.5; }
+.cg-mi{ position:fixed; top:calc(env(safe-area-inset-top, 0px) + 8px); right:10px; z-index:900; font:700 16px 'Barlow', sans-serif;
+  padding:9px 13px; border-radius:999px; border:1.5px solid #D4AF37; background:rgba(14,31,61,.92); color:#F6F1E4; cursor:pointer; }
+.cg-bajas{ border:2px solid #F29A5B; border-radius:12px; padding:12px 14px; font-size:17px; line-height:1.5; color:#F6F1E4; }
+.cg-bajas small{ display:block; color:#B9C3D4; font-size:15px; margin-top:6px; }
+/* Firma de la tarjeta */
+.fm{ margin-top:14px; }
+.fm-tabla{ display:flex; flex-direction:column; margin:8px 0 10px; }
+.fm-fila{ display:flex; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid #2A4373; font-size:19px; }
+.fm-fila b{ font-variant-numeric:tabular-nums; white-space:nowrap; }
+.fm-p{ font-size:18px; line-height:1.4; color:#C9D3E4; margin:8px 0; }
+.fm-btn{ display:block; width:100%; font:700 20px 'Barlow', sans-serif; padding:17px; border-radius:14px; border:none; background:#D4AF37; color:#0E1F3D; cursor:pointer; }
+.fm-btn:disabled{ opacity:.6; }
+.fm-link{ background:none; border:none; color:#E8C45A; font:600 18px 'Barlow', sans-serif; text-decoration:underline; padding:8px 0; cursor:pointer; }
+.fm-ok{ border:2px solid #7BC47F; border-radius:12px; padding:12px 14px; font-size:19px; line-height:1.4; background:#1D3A31; }
+.fm-ok small{ font-size:15px; color:#C9D3E4; }
+.fm-aviso{ color:#F29A5B; font-weight:600; font-size:17px; }
+/* Marcador y validación cruzada */
+.mk-cols{ display:grid; grid-template-columns:repeat(var(--n, 2), minmax(0, 1fr)); gap:8px; }
+.mk-col{ display:flex; flex-direction:column; gap:6px; padding:10px 8px; border-radius:14px; background:#122546; text-align:center; border:2px solid transparent; }
+.mk-col.ok{ border-color:#2F7A4F; }
+.mk-col.mal{ border-color:#F29A5B; background:#3A2A2A; }
+.mk-n{ font:700 22px 'Barlow', sans-serif; color:#F6F1E4; }
+.mk-sub{ font-size:15px; color:#B9C3D4; }
+.mk-tp{ font-size:15px; color:#E8C45A; background:#1B3B6F; border-radius:8px; padding:4px; }
+.mk-tp b{ font-size:18px; }
+.mk-box{ height:76px; border-radius:12px; border:2px solid #8FA6CF; background:#15294D; color:#F6F1E4; font:700 38px 'Barlow', sans-serif; cursor:pointer; touch-action:manipulation; }
+.mk-box.filled{ background:#1B3B6F; }
+.mk-st{ min-height:26px; font-size:17px; font-weight:700; color:#C9D3E4; }
+.mk-col.ok .mk-st{ color:#7BC47F; }
+.mk-col.mal .mk-st{ color:#F29A5B; }
+.mk-col.mal .mk-st b{ font-size:21px; }
+.hole-chip.mk-mal{ border-color:#F29A5B !important; background:#5A3A30 !important; color:#F6F1E4 !important; }
+.mk-elegir{ display:flex; flex-direction:column; gap:12px; background:#122546; border-radius:14px; padding:14px; }
+.mk-tit{ font:700 21px 'Barlow', sans-serif; color:#F6F1E4; }
+.mk-p{ font-size:17px; line-height:1.4; color:#C9D3E4; margin:0; }
+.mk-fila{ display:flex; flex-direction:column; gap:6px; padding-top:8px; border-top:1px solid #2A4373; }
+.mk-q{ font-size:18px; color:#F6F1E4; }
+.mk-ops{ display:flex; flex-wrap:wrap; gap:8px; }
+.mk-op{ font:700 19px 'Barlow', sans-serif; padding:12px 16px; border-radius:12px; border:2px solid #4A6AA3; background:#15294D; color:#F6F1E4; cursor:pointer; }
+.mk-op.on{ border-color:#D4AF37; background:#1B3B6F; box-shadow:inset 0 0 0 1px #D4AF37; }
+.mk-op.on::after{ content:' ✓'; color:#E8C45A; }
+.mk-btn{ font:700 21px 'Barlow', sans-serif; padding:17px; border-radius:14px; border:none; background:#D4AF37; color:#0E1F3D; cursor:pointer; }
+.mk-btn:disabled{ opacity:.6; }
+.mk-aviso{ color:#F29A5B; font-weight:700; font-size:17px; margin:0; }
+.mk-solo{ background:#3A2A2A; border:2px solid #F29A5B; border-radius:12px; padding:10px 12px; font-size:17px; color:#F6F1E4; margin-bottom:8px; }
+
+/* ---- Diseño Grafito deportivo (el definitivo) en cuentas y marcador ---- */
+html[data-tema="grafito"] .cg{ background:#111316 !important; }
+html[data-tema="grafito"] .cg-lbl input, html[data-tema="grafito"] .cg-nombre, html[data-tema="grafito"] .mk-box, html[data-tema="grafito"] .mk-op{ background:#1B1E22 !important; border-color:#3A4047 !important; color:#F2F4F5 !important; }
+html[data-tema="grafito"] .cg-lbl input:focus{ border-color:#C6F24E !important; }
+html[data-tema="grafito"] .cg-nombre.on, html[data-tema="grafito"] .mk-op.on{ background:#2F3A1C !important; border-color:#C6F24E !important; box-shadow:inset 0 0 0 1px #C6F24E !important; }
+html[data-tema="grafito"] .cg-btn:not(.ghost):not(.danger), html[data-tema="grafito"] .fm-btn, html[data-tema="grafito"] .mk-btn{ background:#C6F24E !important; color:#111316 !important; }
+html[data-tema="grafito"] .cg-btn.ghost{ border-color:#4A5058 !important; }
+html[data-tema="grafito"] .cg-link, html[data-tema="grafito"] .fm-link, html[data-tema="grafito"] .mk-tp{ color:#C6F24E !important; }
+html[data-tema="grafito"] .mk-col, html[data-tema="grafito"] .mk-elegir{ background:#1B1E22 !important; }
+html[data-tema="grafito"] .mk-box.filled, html[data-tema="grafito"] .mk-tp{ background:#24282D !important; }
+html[data-tema="grafito"] .fm-fila, html[data-tema="grafito"] .mk-fila{ border-color:#2C3137 !important; }
+
+/* Invitar a tu grupo (solo administrador) */
+.cg-invita{ margin:14px 0; padding:14px; border-radius:14px; border:1.5px solid #C6F24E; background:rgba(198,242,78,.06); }
+.cg-invita > b{ font-size:16px; }
+.cg-enlace{ font-size:13px; word-break:break-all; padding:8px 10px; border-radius:10px; background:rgba(255,255,255,.06); margin-bottom:10px; }
+.cg-invita a.cg-btn{ display:flex; align-items:center; justify-content:center; text-decoration:none; }
+
+/* Grupos: selector, «Mis grupos» y bienvenida */
+.cg-selgrupo{ position:fixed; top:calc(env(safe-area-inset-top, 0px) + 54px); right:10px; z-index:900; max-width:62vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  font:800 14px 'Archivo', 'Barlow', sans-serif; padding:7px 12px; border-radius:999px; border:1.5px solid #C6F24E; background:rgba(17,19,22,.92); color:#C6F24E; cursor:pointer; }
+.cg-grupos{ display:flex; flex-direction:column; gap:8px; margin:6px 0 12px; }
+.cg-grupo{ display:block; width:100%; text-align:left; padding:12px 14px; border-radius:14px; border:1.5px solid #33383E; background:#1B1E22; color:#F2F4F5; cursor:pointer; font-family:inherit; }
+.cg-grupo b{ display:block; font-size:17px; }
+.cg-grupo span{ display:block; font-size:14px; color:#9AA3AB; margin-top:2px; }
+.cg-grupo i{ display:inline-block; margin-top:6px; font-style:normal; font-weight:800; font-size:13px; color:#111316; background:#C6F24E; border-radius:999px; padding:3px 10px; }
+.cg-grupo.on{ border-color:#C6F24E; }
+.cg-opcion{ border:1.5px solid #C6F24E; border-radius:16px; padding:14px; margin:6px 0 14px; }
+.cg-opcion > b{ display:block; font-size:19px; }
+.cg-opcion > span{ display:block; font-size:15px; color:#9AA3AB; margin:4px 0 8px; }
+/* Logo de la app en las pantallas de cuenta */
+.cg-head .cg-logo{ display:block; margin:0 auto 8px; }
+/* Portada de cada grupo */
+html.con-marca[data-tema="grafito"] .pr-abrir{ background:var(--grupo-color, #C6F24E) !important; }
+html.con-marca[data-tema="grafito"] .portada.portada-v2.home-cab{ border-bottom-color:var(--grupo-color, #C6F24E) !important; }
+html.con-marca .hm-derbi{ display:none !important; }
+.pg-escudo{ display:flex; align-items:center; justify-content:center; }
+.pg-patro{ display:flex; align-items:center; justify-content:center; gap:10px; }
+.pg-patro b{ background:#F2F4F5; color:#111316; border-radius:8px; padding:5px 10px; font:800 15px 'Archivo', 'Barlow', sans-serif; }
+/* Asistente de portada */
+.pg-pasos{ display:flex; gap:6px; margin-bottom:6px; }
+.pg-pasos i{ flex:1; height:6px; border-radius:3px; background:rgba(255,255,255,.14); }
+.pg-pasos i.on{ background:#C6F24E; }
+.pg-paso-n{ font-size:15px; color:var(--ink-muted, #B9C3D4); margin-bottom:10px; }
+.pg-escudos{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+.pg-op{ display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 8px; border-radius:16px; background:rgba(255,255,255,.05); border:2px solid rgba(255,255,255,.12); color:#F2F4F5; font:700 16px 'Barlow', sans-serif; cursor:pointer; }
+.pg-op.on{ border-color:#C6F24E; background:rgba(198,242,78,.08); box-shadow:inset 0 0 0 1px #C6F24E; }
+.pg-muestra{ display:flex; justify-content:center; padding:6px 0; }
+.pg-colores{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; }
+.pg-color{ display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 6px; border-radius:14px; background:rgba(255,255,255,.05); border:2px solid rgba(255,255,255,.12); color:#F2F4F5; font:700 16px 'Barlow', sans-serif; cursor:pointer; }
+.pg-color i{ width:40px; height:40px; border-radius:50%; background:var(--c); }
+.pg-color.on{ border-color:var(--c); box-shadow:inset 0 0 0 1px var(--c); }
+.pg-vista{ border-radius:20px; overflow:hidden; background:#111316; border:1.5px solid rgba(255,255,255,.12); }
+.pg-vista-cab{ display:flex; align-items:center; gap:14px; padding:22px 16px; border-bottom:4px solid var(--grupo-color);
+  background:linear-gradient(180deg, rgba(17,19,22,.35), rgba(17,19,22,.95)), url("bg-golf.jpg") center/cover; }
+.pg-vista-eb{ font:800 13px 'Barlow', sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#E3E7EA; }
+.pg-vista-t{ font:400 34px/.98 'Anton', sans-serif; text-transform:uppercase; color:#F2F4F5; margin-top:4px; }
+.pg-vista-patro{ text-align:center; padding:10px; font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:#9AA3AB; }
+.pg-vista-patro b{ color:#F2F4F5; }
+.pg-vista-btn{ margin:12px 16px 16px; padding:16px; border-radius:999px; text-align:center; background:var(--grupo-color); color:#111316; font:900 19px 'Barlow', sans-serif; text-transform:uppercase; letter-spacing:.05em; }
+/* Los demás grupos no llevan la foto de Hato Verde: foto de golf genérica */
+html.con-marca[data-tema="grafito"] .portada.portada-v2.home-cab{
+  background:linear-gradient(180deg, rgba(17,19,22,0) 0%, rgba(17,19,22,0.2) 40%, rgba(17,19,22,0.85) 72%, rgba(17,19,22,0.97) 100%),
+    url('bg-golf.jpg') center 40% / cover no-repeat !important;
+}
+/* Elegir tono de fondo */
+.pg-sub{ font:700 18px 'Barlow', sans-serif; color:var(--ink-c, #F6F1E4); margin-top:4px; }
+.pg-fondos{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+.pg-fondo{ display:flex; flex-direction:column; align-items:stretch; gap:8px; padding:10px; border-radius:16px; background:rgba(255,255,255,.05); border:2px solid rgba(255,255,255,.12); color:#F2F4F5; font:700 16px 'Barlow', sans-serif; cursor:pointer; }
+.pg-fondo i{ display:flex; flex-direction:column; gap:5px; height:64px; padding:8px; border-radius:10px; background:var(--f0); box-sizing:border-box; }
+.pg-fondo i b{ display:block; height:14px; border-radius:5px; background:var(--f1); }
+.pg-fondo i s{ display:block; height:12px; width:60%; margin:0 auto; border-radius:999px; background:var(--c); }
+.pg-fondo.on{ border-color:var(--c); box-shadow:inset 0 0 0 1px var(--c); }
