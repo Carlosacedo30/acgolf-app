@@ -3,8 +3,8 @@
    - Archivos de la app: se usan los guardados al momento y se actualizan por detrás.
    - La página: se intenta traer de internet, pero si en 2,5 s no llega, se abre la guardada.
    - La base de datos y las fotos de fuera van siempre por internet. */
-const CACHE = 'acgolf-75ef67ff';
-const PRECACHE = ["/", "/index.html", "/app-f47b8b0b13.css", "/app-764453c7d1.js", "/manifest.json", "/icon-192.png", "/icon-512.png", "/instalar.html", "/almacen.js", "/instalar.js"];
+const CACHE = 'acgolf-27702472';
+const PRECACHE = ["/", "/index.html", "/app-58773a2e3d.css", "/app-a1303965d7.js", "/manifest.json", "/icon-192.png", "/icon-512.png", "/instalar.html", "/almacen.js", "/instalar.js"];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRECACHE)).catch(() => {}).then(() => self.skipWaiting()));
