@@ -1,14 +1,15 @@
 /* © 2026 Carlos Acedo Domínguez. Todos los derechos reservados. Ver LICENSE. */
-// --- Idioma de la app: Español / English ---
+// --- Idioma de la app: Español / English / Français ---
 // · Se elige abajo en la portada y en «Mi cuenta». Se recuerda en cada móvil.
-// · Si el móvil está en inglés y nadie ha elegido, sale en inglés.
-// · Traduce lo que se ve en pantalla con la lista de idioma-en.js (lo que no está en la lista se queda en español).
+// · Si el móvil está en inglés o en francés y nadie ha elegido, sale en ese idioma.
+// · Traduce lo que se ve en pantalla con las listas de idioma-en.js (inglés) e idiomas/fr/ (francés); lo que no está en la lista se queda en español.
 (function(){
   'use strict';
   const LLAVE = 'acgolfIdioma';
   let idioma = 'es';
-  try { idioma = localStorage.getItem(LLAVE) || ((navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'es'); } catch(e){}
-  if(idioma !== 'en') idioma = 'es';
+  const movil = (navigator.language || '').toLowerCase();
+  try { idioma = localStorage.getItem(LLAVE) || (movil.startsWith('en') ? 'en' : movil.startsWith('fr') ? 'fr' : 'es'); } catch(e){}
+  if(idioma !== 'en' && idioma !== 'fr') idioma = 'es';
   window.acgolfIdioma = idioma;
 
   function cambiar(nuevo){
@@ -18,9 +19,10 @@
 
   // Selector (dos pastillas)
   function selectorHtml(){
-    return '<div class="id-t">' + (idioma === 'en' ? 'Language' : 'Idioma') + '</div><div class="id-l">'
+    return '<div class="id-t">' + (idioma === 'en' ? 'Language' : idioma === 'fr' ? 'Langue' : 'Idioma') + '</div><div class="id-l">'
       + '<button type="button" class="id-b' + (idioma === 'es' ? ' on' : '') + '" data-idioma="es" data-no-traducir>🇪🇸 Español</button>'
-      + '<button type="button" class="id-b' + (idioma === 'en' ? ' on' : '') + '" data-idioma="en" data-no-traducir>🇬🇧 English</button></div>';
+      + '<button type="button" class="id-b' + (idioma === 'en' ? ' on' : '') + '" data-idioma="en" data-no-traducir>🇬🇧 English</button>'
+      + '<button type="button" class="id-b' + (idioma === 'fr' ? ' on' : '') + '" data-idioma="fr" data-no-traducir>🇫🇷 Français</button></div>';
   }
   function enganchar(caja){
     caja.querySelectorAll('[data-idioma]').forEach(b => b.onclick = () => { if(b.dataset.idioma !== idioma) cambiar(b.dataset.idioma); });
@@ -44,11 +46,13 @@
   }
 
   // ---------- Traducción ----------
-  const T = idioma === 'en' ? Object.assign({}, window.acgolfTextosEN2 || {}, window.acgolfTextosEN || {}) : null;
-  const P = idioma === 'en' ? (window.acgolfPatronesEN || []).slice() : [];
+  const T = idioma === 'en' ? Object.assign({}, window.acgolfTextosEN3 || {}, window.acgolfTextosEN2 || {}, window.acgolfTextosEN || {})
+          : idioma === 'fr' ? Object.assign({}, window.acgolfTextosFR2 || {}, window.acgolfTextosFR || {}) : null;
+  const P = idioma === 'en' ? (window.acgolfPatronesEN || []).slice()
+          : idioma === 'fr' ? (window.acgolfPatronesFR || []).slice() : [];
   // Plantillas con hueco ({n} = nombre del jugador, {CAMPO} = campo…): «Par, {n}. …» → «Par, {n}. …»
   const escRe = x => x.replace(/[.*+?^$()|[\]\\]/g, '\\$&');
-  if(T) (window.acgolfPlantillasEN || []).forEach(([es, en]) => {
+  if(T) (idioma === 'fr' ? (window.acgolfPlantillasFR || []) : (window.acgolfPlantillasEN || [])).forEach(([es, en]) => {
     const huecos = es.match(/\{(n|CAMPO|)\}/g) || [];
     const re = new RegExp('^' + es.split(/\{(?:n|CAMPO|)\}/).map(escRe).join('(.+?)') + '$');
     P.push([re, (...m) => { let i = 1; return en.replace(/\{(?:n|CAMPO|)\}/g, () => m[i++] || ''); }]);
@@ -80,7 +84,7 @@
   }
   window.acgolfTraducir = t => traducir(String(t || '')) || t;
 
-  const SALTAR = /^(SCRIPT|STYLE|TEXTAREA|INPUT|SELECT|OPTION|svg|path)$/;
+  const SALTAR = /^(SCRIPT|STYLE|TEXTAREA|INPUT|SELECT|svg|path)$/;
   function fuera(el){ return !el || SALTAR.test(el.nodeName) || (el.closest && el.closest('[data-no-traducir]')); }
   function nodoTexto(n){
     if(fuera(n.parentNode)) return;
@@ -88,7 +92,8 @@
   }
   const ATRS = ['placeholder', 'aria-label', 'title'];
   function atributos(el){
-    if(fuera(el)) return;
+    // Los campos de escribir (INPUT) también se traducen en sus textos de ayuda (placeholder)
+    if(!el || (el.closest && el.closest('[data-no-traducir]'))) return;
     for(const a of ATRS){ const v = el.getAttribute && el.getAttribute(a); if(v){ const r = traducir(v); if(r != null) el.setAttribute(a, r); } }
   }
   function recorrer(raiz){
@@ -102,7 +107,7 @@
   }
 
   if(T){
-    document.documentElement.lang = 'en';
+    document.documentElement.lang = idioma;
     // Ventanitas del navegador (avisos y preguntas)
     const lineas = m => String(m == null ? '' : m).split('\n').map(l => traducir(l) || l).join('\n');
     const a = window.alert, c = window.confirm, p = window.prompt;
