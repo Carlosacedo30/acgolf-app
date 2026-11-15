@@ -4,8 +4,8 @@
    - La página: se intenta traer de internet (preguntando siempre si hay versión nueva), pero si en 2,5 s no llega, se abre la guardada.
    - La base de datos y las fotos de fuera van siempre por internet. */
 importScripts('sw-avisos.js?v=1'); // avisos al móvil (notificaciones)
-const CACHE = 'acgolf-7518486e';
-const PRECACHE = ["/", "/index.html", "/app-b1dc52671c.css", "/app-a18bd2aac9.js", "/manifest.json", "/icon-192.png", "/icon-512.png", "/instalar.html", "/almacen.js", "/instalar.js"];
+const CACHE = 'acgolf-3eb64c5f';
+const PRECACHE = ["/", "/index.html", "/app-aee0354e82.css", "/app-6d46646816.js", "/manifest.json", "/icon-192.png", "/icon-512.png", "/instalar.html", "/almacen.js", "/instalar.js"];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRECACHE)).catch(() => {}).then(() => self.skipWaiting()));
