@@ -20,6 +20,7 @@
   let elegido = '';      // equipo que venía en el enlace (se guarda sin acentos ni espacios)
   let creando = false;
   let editando = false;   // el administrador cambia el día y el campo
+  let noPermitido = false; // la Ryder es solo para tres grupos
   let pedida = false;    // se pidió una inscripción concreta (por enlace)
   const esInvitado = () => document.documentElement.classList.contains('es-invitado');
   const PEND = 'acgolfRyderPendiente';
@@ -115,6 +116,10 @@
       o.innerHTML = '<div class="ri-in">' + cabecera(null) + '<div class="ri-tj"><b style="font:900 21px Archivo,system-ui,sans-serif">Para apuntarte necesitas tu cuenta</b>'
         + '<div class="ri-dat" style="color:#F2F4F5">En la Ryder no se admiten invitados. Crea tu cuenta en acgolf (es gratis y lleva un minuto) y vuelve a pulsar tu enlace de WhatsApp. Si ya la has creado y confirmado, te llevaremos a tu equipo.</div></div>'
         + '<button type="button" class="ri-btn ri-pri" data-ri="cuenta">Crear mi cuenta</button></div>';
+      return;
+    }
+    if(!r && noPermitido){
+      o.innerHTML = '<div class="ri-in">' + cabecera(null) + '<div class="ri-vacio">Esta Ryder es solo para los grupos Los Iscariotes, Cajapollos y Los Domingueros.</div></div>';
       return;
     }
     if(!r){
@@ -219,6 +224,81 @@
       + '¿No tienes cuenta? Créala gratis en acgolf.es y vuelve a pulsar tu enlace. No se admiten invitados.\n\n'
       + (e[0].capitan && e[1].capitan ? 'Capitanes: ' + e[0].capitan + ' (' + e[0].nombre + ') y ' + e[1].capitan + ' (' + e[1].nombre + ')\n' : '') + datosTxt(r);
   }
+  // ---------- Imagen para WhatsApp (igual que la pantalla: capitanes, marcador y equipos) ----------
+  function imagenPantalla(x){
+    const W = 1080, P = 48, F = 'Archivo, system-ui, sans-serif';
+    const lista = x.equipos.map(e => e.players.filter(n => !(e.capitan && norm(n) === norm(e.capitan))));
+    const filas = Math.max(1, ...lista.map(l => Math.min(l.length, 14)));
+    const tieneCap = x.equipos.some(e => e.capitan);
+    const H = 150 + 160 + (tieneCap ? 250 : 0) + 330 + 110 + filas * 46 + 150;
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const g = c.getContext('2d');
+    const rr = (px, py, w, h, rad, fill, line, lw) => { g.beginPath(); g.roundRect(px, py, w, h, rad); if(fill){ g.fillStyle = fill; g.fill(); } if(line){ g.strokeStyle = line; g.lineWidth = lw || 2; g.stroke(); } };
+    const tx = (t, px, py, font, col, al) => { g.font = font; g.fillStyle = col; g.textAlign = al || 'left'; g.fillText(t, px, py); };
+    const corta = (t, max, font) => { g.font = font; while(g.measureText(t).width > max && t.length > 3) t = t.slice(0, -2); return t; };
+    g.fillStyle = '#111316'; g.fillRect(0, 0, W, H);
+    let y = 90;
+    tx('RYDER CUP', P, y, '800 28px ' + F, '#C6F24E'); y += 66;
+    tx((x.equipos[0].nombre + ' – ' + x.equipos[1].nombre).toUpperCase(), P, y, '900 66px ' + F, '#F2F4F5'); y += 46;
+    tx(datosTxt(x), P, y, '500 30px Barlow, system-ui, sans-serif', '#9AA3AB'); y += 40;
+    if(tieneCap){
+      const w = (W - 2 * P - 20) / 2;
+      x.equipos.forEach((e, k) => {
+        const px = P + k * (w + 20);
+        rr(px, y, w, 210, 26, '#1B1E22', '#33383E', 2);
+        g.fillStyle = e.color; g.beginPath(); g.roundRect(px, y, w, 10, [26, 26, 0, 0]); g.fill();
+        g.beginPath(); g.arc(px + w / 2, y + 66, 38, 0, 7); g.fillStyle = '#24282D'; g.fill(); g.lineWidth = 5; g.strokeStyle = e.color; g.stroke();
+        tx(iniciales(e.capitan), px + w / 2, y + 78, '900 30px ' + F, '#F2F4F5', 'center');
+        tx(('CAPITÁN DEL ' + e.nombre).toUpperCase(), px + w / 2, y + 140, '800 20px ' + F, '#C6F24E', 'center');
+        tx(corta(e.capitan || '', w - 30, '900 26px ' + F), px + w / 2, y + 180, '900 26px ' + F, '#F2F4F5', 'center');
+      });
+      y += 250;
+    }
+    // marcador
+    const [A, B] = x.equipos, a = A.players.length, b = B.players.length, t = (a + b) || 1;
+    rr(P, y, W - 2 * P, 300, 26, '#1B1E22', '#33383E', 2);
+    tx('MARCADOR DE APUNTADOS', W / 2, y + 52, '800 22px ' + F, '#C6F24E', 'center');
+    tx(A.nombre.toUpperCase(), P + 34, y + 104, '800 22px ' + F, '#9AA3AB');
+    tx(B.nombre.toUpperCase(), W - P - 34, y + 104, '800 22px ' + F, '#9AA3AB', 'right');
+    tx(String(a), P + 34, y + 176, '900 84px ' + F, '#F2F4F5');
+    tx(String(b), W - P - 34, y + 176, '900 84px ' + F, '#F2F4F5', 'right');
+    const bw = W - 2 * P - 68, bx = P + 34, by = y + 200;
+    rr(bx, by, bw, 18, 9, B.color); g.save(); g.beginPath(); g.roundRect(bx, by, bw, 18, 9); g.clip(); g.fillStyle = A.color; g.fillRect(bx, by, a + b ? bw * a / t : bw / 2, 18); g.restore();
+    const fr = frase(x).split(' '); let l1 = '', l2 = '';
+    fr.forEach(w2 => { g.font = '700 26px Barlow, system-ui, sans-serif'; if(g.measureText(l1 + ' ' + w2).width < bw && !l2) l1 += (l1 ? ' ' : '') + w2; else l2 += (l2 ? ' ' : '') + w2; });
+    tx(l1, W / 2, y + 252, '700 26px Barlow, system-ui, sans-serif', '#F2F4F5', 'center');
+    if(l2) tx(l2, W / 2, y + 284, '700 26px Barlow, system-ui, sans-serif', '#F2F4F5', 'center');
+    y += 340;
+    // equipos
+    const w = (W - 2 * P - 20) / 2, alto = 110 + filas * 46;
+    x.equipos.forEach((e, k) => {
+      const px = P + k * (w + 20);
+      rr(px, y, w, alto, 26, '#1B1E22', '#33383E', 2);
+      g.beginPath(); g.arc(px + 36, y + 44, 10, 0, 7); g.fillStyle = e.color; g.fill();
+      tx(e.nombre.toUpperCase(), px + 58, y + 53, '900 28px ' + F, '#F2F4F5');
+      tx(String(e.players.length), px + w - 28, y + 56, '900 40px ' + F, '#C6F24E', 'right');
+      const l = lista[k];
+      if(!l.length) tx('Nadie más todavía', px + 28, y + 112, '500 24px Barlow, system-ui, sans-serif', '#9AA3AB');
+      l.slice(0, 14).forEach((n, i) => tx(corta(n, w - 56, '600 25px Barlow, system-ui, sans-serif'), px + 28, y + 112 + i * 46, '600 25px Barlow, system-ui, sans-serif', '#F2F4F5'));
+      if(l.length > 14) tx('… y ' + (l.length - 14) + ' más', px + 28, y + 112 + 14 * 46, '500 22px Barlow, system-ui, sans-serif', '#9AA3AB');
+    });
+    y += alto + 56;
+    tx('Apúntate en acgolf.es · Solo Iscariotes, Cajapollos y Domingueros', W / 2, y, '700 24px Barlow, system-ui, sans-serif', '#9AA3AB', 'center');
+    return new Promise(ok => c.toBlob(ok, 'image/png'));
+  }
+  // Manda la imagen + los enlaces al WhatsApp (en el móvil se comparte la foto; si no se puede, se baja la foto y se abre el texto)
+  async function mandarWA(texto){
+    let blob = null;
+    try { if(document.fonts && document.fonts.ready) await document.fonts.ready; blob = await imagenPantalla(r); } catch(e){ blob = null; }
+    if(blob){
+      const f = new File([blob], 'ryder.png', { type: 'image/png' });
+      try {
+        if(navigator.canShare && navigator.canShare({ files: [f] })){ await navigator.share({ files: [f], text: texto }); return; }
+      } catch(e){ if(e && e.name === 'AbortError') return; }
+      try { const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = 'ryder.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); } catch(e){}
+    }
+    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+  }
   async function crear(){
     const client = initSupabase(); if(!client) return;
     const n1 = (document.getElementById('riE1').value || '').trim(), n2 = (document.getElementById('riE2').value || '').trim();
@@ -254,8 +334,8 @@
       else if(a === 'quitar'){ if(confirm('¿Quitar a ' + b.dataset.n + ' de la lista?')) await quitar(b.dataset.n); }
       else if(a === 'pasar') await pasar(b.dataset.n, i);
       else if(a === 'cerrarlista') await cambiar(x => { x.cerrada = !x.cerrada; return null; });
-      else if(a === 'marcador') window.open('https://wa.me/?text=' + encodeURIComponent(mensajeMarcador()), '_blank');
-      else if(a === 'wa') window.open('https://wa.me/?text=' + encodeURIComponent(mensaje()), '_blank');
+      else if(a === 'marcador') await mandarWA(mensajeMarcador());
+      else if(a === 'wa') await mandarWA(mensaje());
       else if(a === 'copiar'){ try { await navigator.clipboard.writeText(mensaje()); b.textContent = '¡Copiado!'; } catch(e){ prompt('Copia este mensaje:', mensaje()); } }
       else if(a === 'borrar'){
         if(confirm('¿Borrar la inscripción?\nDesaparece para todos y no se puede deshacer.')){
@@ -273,7 +353,9 @@
     o.innerHTML = '<div class="ri-in"><div class="ri-vacio">Cargando…</div></div>';
     pedida = !!code && !!porEnlace;
     if(esInvitado()){ r = null; pedida = false; pintar(); return; }
+    noPermitido = false;
     try { r = await traer(code || null); if(!r && code && !porEnlace) r = await traer(null); } catch(e){ r = null; }
+    if(!r){ try { const c = initSupabase(); if(c){ const { data } = await c.rpc('ryder_ins_permitido'); noPermitido = (data === false); } } catch(e){} }
     if(r){ vigilar(); try { localStorage.setItem(ULTIMA, r.code); } catch(e){} }
     borrarPend();
     pintar();
@@ -282,7 +364,7 @@
     if(ov) ov.hidden = true; document.body.style.overflow = '';
     if(/[?&]ryder=/.test(location.search)){ try { history.replaceState(null, '', location.pathname); } catch(e){} }
   }
-  window.acgolfRyderIns = { abrir: () => { let u = ''; try { u = localStorage.getItem(ULTIMA) || ''; } catch(e){} return abrir(u || null, ''); }, cerrar };
+  window.acgolfRyderIns = { _imagen: x => imagenPantalla(x || r), abrir: () => { let u = ''; try { u = localStorage.getItem(ULTIMA) || ''; } catch(e){} return abrir(u || null, ''); }, cerrar };
 
   // Enlace de WhatsApp: ?ryder=CODIGO&equipo=betis. Se recuerda en el móvil (como la invitación del grupo) porque quien
   // no tiene cuenta tiene que registrarse y confirmar su correo, y en esa vuelta el enlace se pierde. Se abre en cuanto hay sesión.
