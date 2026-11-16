@@ -158,12 +158,14 @@
     if(admin()){
       h += '<div class="ri-adm"><h3>Solo administrador</h3>'
         + '<button type="button" class="ri-btn ri-pri" data-ri="wa">Mandar al WhatsApp</button>'
+        + '<button type="button" class="ri-btn ri-sec" data-ri="watexto">Mandar solo el texto al WhatsApp</button>'
         + '<button type="button" class="ri-btn ri-sec" data-ri="copiar">Copiar el mensaje</button>'
         + '<button type="button" class="ri-btn ri-sec" data-ri="editar">Cambiar día y campo</button>'
         + '<button type="button" class="ri-btn ri-sec" data-ri="cerrarlista">' + (x.cerrada ? 'Abrir la lista otra vez' : 'Cerrar la lista') + '</button>'
         + '<button type="button" class="ri-link" data-ri="borrar">Borrar esta inscripción</button></div>';
     }
     o.innerHTML = h + '</div>';
+    prepararImagen();
   }
   const iniciales = n => String(n || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('');
   function bandaCapitanes(x){
@@ -226,6 +228,7 @@
   }
   // ---------- Imagen para WhatsApp (igual que la pantalla: capitanes, marcador y equipos) ----------
   function imagenPantalla(x){
+    if(!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, rad){ const q = Array.isArray(rad) ? rad : [rad, rad, rad, rad], a = q[0], b = q.length > 1 ? q[1] : a, c = q.length > 2 ? q[2] : a, d = q.length > 3 ? q[3] : b; this.moveTo(x + a, y); this.arcTo(x + w, y, x + w, y + h, b); this.arcTo(x + w, y + h, x, y + h, c); this.arcTo(x, y + h, x, y, d); this.arcTo(x, y, x + w, y, a); this.closePath(); };
     const W = 1080, P = 48, F = 'Archivo, system-ui, sans-serif';
     const lista = x.equipos.map(e => e.players.filter(n => !(e.capitan && norm(n) === norm(e.capitan))));
     const filas = Math.max(1, ...lista.map(l => Math.min(l.length, 14)));
@@ -286,18 +289,33 @@
     tx('Apúntate en acgolf.es · Solo Iscariotes, Cajapollos y Domingueros', W / 2, y, '700 24px Barlow, system-ui, sans-serif', '#9AA3AB', 'center');
     return new Promise(ok => c.toBlob(ok, 'image/png'));
   }
-  // Manda la imagen + los enlaces al WhatsApp (en el móvil se comparte la foto; si no se puede, se baja la foto y se abre el texto)
-  async function mandarWA(texto){
-    let blob = null;
-    try { if(document.fonts && document.fonts.ready) await document.fonts.ready; blob = await imagenPantalla(r); } catch(e){ blob = null; }
-    if(blob){
-      const f = new File([blob], 'ryder.png', { type: 'image/png' });
-      try {
-        if(navigator.canShare && navigator.canShare({ files: [f] })){ await navigator.share({ files: [f], text: texto }); return; }
-      } catch(e){ if(e && e.name === 'AbortError') return; }
+  // La imagen se prepara de antemano (así, al pulsar el botón, el móvil deja compartirla sin bloquearse)
+  let imgClave = '', imgBlob = null, imgCalc = '';
+  function prepararImagen(){
+    if(!r || typeof imagenPantalla !== 'function') return;
+    const clave = JSON.stringify(r.equipos.map(e => [e.nombre, e.capitan, e.players]));
+    if(clave === imgClave || clave === imgCalc) return;
+    imgCalc = clave;
+    Promise.resolve(document.fonts && document.fonts.ready).catch(() => {}).then(() => imagenPantalla(r)).then(b => { imgBlob = b; imgClave = clave; }).catch(() => { imgBlob = null; });
+  }
+  function soloTexto(texto){
+    const u = 'https://wa.me/?text=' + encodeURIComponent(texto);
+    if(!window.open(u, '_blank')) location.href = u;
+  }
+  // Manda imagen + enlaces. Todo síncrono al pulsar; si el móvil no deja compartir la foto, se manda el texto con los enlaces
+  function mandarWA(texto){
+    const blob = imgBlob;
+    if(blob && navigator.share && navigator.canShare){
+      let f = null; try { f = new File([blob], 'ryder.png', { type: 'image/png' }); } catch(e){}
+      if(f && navigator.canShare({ files: [f] })){
+        navigator.share({ files: [f], text: texto }).catch(e => { if(!(e && e.name === 'AbortError')) soloTexto(texto); });
+        return;
+      }
+    }
+    if(blob){ // ordenador: se baja la foto y se abre WhatsApp con el texto
       try { const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = 'ryder.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); } catch(e){}
     }
-    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+    soloTexto(texto);
   }
   async function crear(){
     const client = initSupabase(); if(!client) return;
@@ -334,8 +352,9 @@
       else if(a === 'quitar'){ if(confirm('¿Quitar a ' + b.dataset.n + ' de la lista?')) await quitar(b.dataset.n); }
       else if(a === 'pasar') await pasar(b.dataset.n, i);
       else if(a === 'cerrarlista') await cambiar(x => { x.cerrada = !x.cerrada; return null; });
-      else if(a === 'marcador') await mandarWA(mensajeMarcador());
-      else if(a === 'wa') await mandarWA(mensaje());
+      else if(a === 'marcador') mandarWA(mensajeMarcador());
+      else if(a === 'wa') mandarWA(mensaje());
+      else if(a === 'watexto') soloTexto(mensaje());
       else if(a === 'copiar'){ try { await navigator.clipboard.writeText(mensaje()); b.textContent = '¡Copiado!'; } catch(e){ prompt('Copia este mensaje:', mensaje()); } }
       else if(a === 'borrar'){
         if(confirm('¿Borrar la inscripción?\nDesaparece para todos y no se puede deshacer.')){
