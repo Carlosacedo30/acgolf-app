@@ -4,8 +4,8 @@
    - La página: se intenta traer de internet (preguntando siempre si hay versión nueva), pero si en 2,5 s no llega, se abre la guardada.
    - La base de datos y las fotos de fuera van siempre por internet. */
 importScripts('sw-avisos.js?v=1'); // avisos al móvil (notificaciones)
-const CACHE = 'acgolf-ryder1';
-const PRECACHE = ["/", "/index.html", "/app-d9efaed989.css", "/app-c54cbcffc1.js", "/manifest.json", "/icon-192.png", "/icon-512.png", "/instalar.html", "/almacen.js", "/instalar.js", "/ryder-inscripcion.js?v=1", "/ryder-inscripcion.css?v=1"];
+const CACHE = 'acgolf-ryder2';
+const PRECACHE = ["/", "/index.html", "/app-d9efaed989.css", "/app-ec0024509f.js", "/manifest.json", "/icon-192.png", "/icon-512.png", "/instalar.html", "/almacen.js", "/instalar.js", "/ryder-inscripcion.js?v=1", "/ryder-inscripcion.css?v=1"];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRECACHE)).catch(() => {}).then(() => self.skipWaiting()));
