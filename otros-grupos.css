@@ -14,3 +14,12 @@
 #ogCaja .og-sub{ font:500 17px/1.25 Barlow,sans-serif; color:#9aa3ab; margin-top:3px; }
 #ogCaja .og-btn{ align-self:stretch; margin-top:10px; min-height:48px; display:flex; align-items:center; justify-content:center; border-radius:999px; background:#c6f24e; color:#111316; font:900 17px/1.1 Archivo,Barlow,sans-serif; }
 #ogCaja .og-card .og-fl{ position:absolute; right:18px; top:50%; width:10px; height:10px; margin-top:-5px; border-right:2px solid #c6f24e; border-top:2px solid #c6f24e; transform:rotate(45deg); }
+
+/* Juegas la Ryder: aviso arriba del Inicio */
+#ogRyder{ display:flex; flex-direction:column; gap:10px; margin-bottom:10px; }
+#ogRyder[hidden]{ display:none; }
+#ogRyder .og-card{ background:#2F3A1C; border:1px solid rgba(198,242,78,.55); }
+#ogRyder .og-etq{ background:#c6f24e; color:#111316; }
+#ogRyder .og-tit{ font:900 22px/1.1 Archivo,Barlow,sans-serif; color:#f2f4f5; }
+#ogRyder .og-sub{ color:#d9e4bd; }
+#ogRyder .og-pt{ display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px; vertical-align:-1px; }
