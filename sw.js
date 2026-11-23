@@ -4,8 +4,8 @@
    - La página: se intenta traer de internet (preguntando siempre si hay versión nueva), pero si en 2,5 s no llega, se abre la guardada.
    - La base de datos y las fotos de fuera van siempre por internet. */
 importScripts('sw-avisos.js?v=1'); // avisos al móvil (notificaciones)
-const CACHE = "acgolf-ritmo7";
-const PRECACHE = ["/", "/index.html", "/app-d9efaed989.css", "/app-bad0a26ebc.js", "/manifest.json", "/icon-192.png", "/icon-512.png", "/instalar.html", "/almacen.js", "/instalar.js", "/ryder-inscripcion.js?v=3", "/otros-grupos.js","/ritmo-campo.js","/ritmo-jugador.js","/seguimiento-carlos.js", "/otros-grupos.css","/ritmo-campo.css","/ritmo-jugador.css", "/ryder-inscripcion.css?v=3"];
+const CACHE = "acgolf-ritmo8";
+const PRECACHE = ["/", "/index.html", "/app-d9efaed989.css", "/app-287c823da4.js", "/manifest.json", "/icon-192.png", "/icon-512.png", "/instalar.html", "/almacen.js", "/instalar.js", "/ryder-inscripcion.js?v=3", "/otros-grupos.js","/ritmo-campo.js","/ritmo-jugador.js","/seguimiento-carlos.js", "/otros-grupos.css","/ritmo-campo.css","/ritmo-jugador.css", "/ryder-inscripcion.css?v=3"];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRECACHE)).catch(() => {}).then(() => self.skipWaiting()));
